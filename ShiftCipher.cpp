@@ -25,7 +25,7 @@ int main(int argc, char** argv)
     }
 
     string mode = argv[1];
-    CryptoFunctions::RemoveWhitespace(mode);
+    RemoveWhitespace(mode);
 
     if( (mode.length() != 2) || (mode[1] != 'D' && mode[1] != 'E'))
     {
@@ -57,16 +57,16 @@ void Encrypt()
 
     cout << "Enter the plaintext.\n";
     getline(cin, plaintext);
-    CryptoFunctions::RemoveWhitespace(plaintext);
+    RemoveWhitespace(plaintext);
 
     cout << "Enter the key.\n";
     cin >> key;
 
-    vector<int> plaintextVector = CryptoFunctions::StringToVectorInt(plaintext);
+    vector<int> plaintextVector = StringToVectorInt(plaintext);
     
     vector<int> ciphertextVector = ShiftCipherEncrypt(plaintextVector, key);
 
-    cout << "ciphertext:\n" << CryptoFunctions::VectorIntToString(ciphertextVector);
+    cout << "ciphertext:\n" << VectorIntToString(ciphertextVector);
 }
 
 vector<int> ShiftCipherEncrypt(vector<int> plaintextVector, int key)
@@ -88,16 +88,16 @@ void Decrypt()
 
     cout << "Enter the ciphertext.\n";
     getline(cin, ciphertext);
-    CryptoFunctions::RemoveWhitespace(ciphertext);
+    RemoveWhitespace(ciphertext);
 
     cout << "Enter the key.\n";
     cin >> key;
 
-    vector<int> ciphertextVector = CryptoFunctions::StringToVectorInt(ciphertext);
+    vector<int> ciphertextVector = StringToVectorInt(ciphertext);
     
     vector<int> plaintextVector = ShiftCipherDecrypt(ciphertextVector, key);
 
-    cout << "plaintext:\n" << CryptoFunctions::VectorIntToString(plaintextVector);
+    cout << "plaintext:\n" << VectorIntToString(plaintextVector);
 }
 
 vector<int> ShiftCipherDecrypt(vector<int> ciphertextVector, int key)

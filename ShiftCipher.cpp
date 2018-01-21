@@ -57,10 +57,10 @@ void Encrypt()
 
     cout << "Enter the plaintext.\n";
     getline(cin, plaintext);
-    RemoveWhitespace(plaintext);
 
     cout << "Enter the key.\n";
     cin >> key;
+    key %= 94;
 
     vector<int> plaintextVector = StringToVectorInt(plaintext);
     
@@ -75,7 +75,7 @@ vector<int> ShiftCipherEncrypt(vector<int> plaintextVector, int key)
 
     for(int i : plaintextVector)
     {
-        ciphertextVector.push_back( (i + key) % 26);
+        ciphertextVector.push_back( (i + key) % 94);
     }
 
     return ciphertextVector;
@@ -88,10 +88,10 @@ void Decrypt()
 
     cout << "Enter the ciphertext.\n";
     getline(cin, ciphertext);
-    RemoveWhitespace(ciphertext);
 
     cout << "Enter the key.\n";
     cin >> key;
+    key %= 94;
 
     vector<int> ciphertextVector = StringToVectorInt(ciphertext);
     
@@ -106,7 +106,7 @@ vector<int> ShiftCipherDecrypt(vector<int> ciphertextVector, int key)
 
     for(int i : ciphertextVector)
     {
-        plaintextVector.push_back( ( (i + 26) - key) % 26);
+        plaintextVector.push_back( ( (i + 94) - key) % 94);
     }
 
     return plaintextVector;

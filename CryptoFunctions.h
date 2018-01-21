@@ -3,41 +3,22 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <stdexcept>
 
 using namespace std;
 
 /*
-    LetterToNumber takes a char and optionally a bool denoting whether or not to account for capital and lowercase. If not provided, or false is provided, everything will be taken toupper.
-    LetterToNumber will return the integer representation of the char from [0-25]
-    If the char provided was not valid input, IE not a-Z, -1 will be returned. 
+    LetterToNumber takes a character and will return the integer representation of it.
+    LetterToNumber will return an integer from [0-93] accounting for ASCII codes from 32-126
 */
 static int LetterToNumber(char a, bool isCaseSensitive = false)
 {
-    if( ! isalpha(a))
+    if((int)a < 32 || ((int)a) > 126)
     {
-        cout << a << " is not a letter.\n";
-        return -1;
+        string msg =  a + ": is not a supported character. Only use ASCII characters from 32 - 126.";
+        throw std::invalid_argument(msg);
     }
-
-    if(isCaseSensitive)
-    {
-        if(islower(a))
-        {
-            return ((int) a) - 97;
-        }
-        else
-        {
-            return ((int) a) - 65;
-        }
-    }
-    else
-    {
-        if(islower(a))
-        {
-            a = toupper(a);
-        }
-        return ((int) a) - 65;
-    }
+    return ((int)a) - 32;
 }
 
 /*
@@ -46,14 +27,7 @@ static int LetterToNumber(char a, bool isCaseSensitive = false)
 */
 static char NumberToLetter(int a, bool isLowercase = false)
 {
-    if(isLowercase)
-    {
-        return (char) a + 97;
-    }
-    else
-    {
-        return (char) a + 65;
-    }
+    return (char) (a + 32);
 }
 
 /*

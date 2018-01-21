@@ -1,2 +1,4 @@
 
 *.exe
+
+Python/CryptoFunctions/__pycache__/

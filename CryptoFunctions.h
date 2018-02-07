@@ -15,13 +15,18 @@ static int LetterToNumber(char a, bool limitToCharsOnly =  false)
 {
     if(limitToCharsOnly)
     {
+        if( ! isalpha(a))
+        {
+            cerr << a << ": is not a character." << endl;
+            exit(0);
+        }
         a = toupper(a);
         return ( (int) a) - 65;
     }
     if((int)a < 32 || ((int)a) > 126)
     {
-        string msg =  a + ": is not a supported character. Only use ASCII characters from 32 - 126.";
-        throw std::invalid_argument(msg);
+        cerr << a << ": is not a supported character. Only use ASCII characters from 32 - 126." << endl;
+        exit(0);
     }
     return ((int)a) - 32;
 }
@@ -75,4 +80,30 @@ static string VectorIntToString(vector<int> vInt, bool limitToCharsOnly)
 static void RemoveWhitespace(string& str)
 {
     str.erase(remove_if(str.begin(), str.end(), ::isspace), str.end());
+}
+
+static void RemoveNonAlphaChars(string& str)
+{
+    for(char c : str)
+    {
+        if (! isalpha(c))
+        {
+            str.erase(std::remove(str.begin(), str.end(), c), str.end());
+        }
+    }
+}
+
+static void PrintBlock(string str, int blockLength = 5)
+{
+    int tempBlockLength = blockLength;
+    for(char c : str)
+    {
+        cout << c;
+        tempBlockLength--;
+        if(tempBlockLength == 0)
+        {
+            cout << " ";
+            tempBlockLength = blockLength;
+        }
+    }
 }

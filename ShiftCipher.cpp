@@ -98,6 +98,12 @@ void Encrypt()
     cout << "Enter the plaintext.\n";
     getline(cin, plaintext);
 
+    if(limitedChars)
+    {
+        RemoveWhitespace(plaintext);
+        RemoveNonAlphaChars(plaintext);
+    }
+
     cout << "Enter the key.\n";
     cin >> key;
     key %= modulusNum;
@@ -106,7 +112,8 @@ void Encrypt()
     
     vector<int> ciphertextVector = ShiftCipherEncrypt(plaintextVector, key);
 
-    cout << "ciphertext:\n" << VectorIntToString(ciphertextVector, limitedChars);
+    cout << "ciphertext:\n";
+    PrintBlock(VectorIntToString(ciphertextVector, limitedChars));
 }
 
 vector<int> ShiftCipherEncrypt(vector<int> plaintextVector, int key)
@@ -128,7 +135,7 @@ void Decrypt()
 
     cout << "Enter the ciphertext.\n";
     getline(cin, ciphertext);
-
+    RemoveWhitespace(ciphertext);
     cout << "Enter the key.\n";
     cin >> key;
     key %= modulusNum;

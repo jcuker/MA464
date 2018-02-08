@@ -107,3 +107,8 @@ static void PrintBlock(string str, int blockLength = 5)
         }
     }
 }
+
+static bool ValidInverseExists(int num, int modNum)
+{
+    // TODO
+}

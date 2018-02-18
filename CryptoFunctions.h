@@ -108,7 +108,69 @@ static void PrintBlock(string str, int blockLength = 5)
     }
 }
 
+static vector<vector<int>> StringToMatrixInt(string str, int dimen, bool limitedChars)
+{
+    if(str.length() % dimen != 0)
+    {
+        cerr << "Length of text is not divisible by dimension! (" << dimen << ")\n";
+        exit(0);
+    }
+
+    int numRows = dimen;
+    int numCols = str.length() / dimen;
+
+    vector<vector<int>> returnMatrix(numRows, vector<int>(numCols));
+    int currentPositionInString = 0;
+    
+    for(int currentRow = 0; currentRow < numRows; currentRow++)
+    {
+        for(int currentCol = 0; currentCol < numCols;  currentCol++)
+        {
+            char currentChar = str[currentPositionInString];
+            int intRepresentationOfChar = LetterToNumber(currentChar, limitedChars);
+            returnMatrix[currentRow][currentCol] = (intRepresentationOfChar);
+            currentPositionInString++;
+        }
+    }
+    return returnMatrix;
+}
+
+static string MatrixIntToString(vector<vector<int>> matrix, bool limitedChars)
+{
+    string returnString;
+    
+    for(int currentRow = 0; currentRow < matrix.size(); currentRow++)
+    {
+        for(int currentCol = 0; currentCol < matrix[currentRow].size();  currentCol++)
+        {
+            int currentCharAsInt = matrix[currentRow][currentCol];
+            char currentChar = NumberToLetter(currentCharAsInt, limitedChars);
+            returnString += currentChar;
+        }
+    }
+
+    return returnString;
+}
+
 static bool ValidInverseExists(int num, int modNum)
 {
     // TODO
+}
+
+static vector<vector<int>> MultiplyMatrices(vector<vector<int>> leftMatrix, vector<vector<int>> rightMatrix)
+{
+    if(leftMatrix[0].size != rightMatrix.size())
+    {
+        cerr << "dimen error.\n";
+        exit(0);
+    }
+
+    vector<vector<int>> returnMatrix(leftMatrix.size(), vector<int>(rightMatrix[0].size()));
+
+    for(i = 0; i < leftMatrix.size(); ++i)
+        for(j = 0; j < rightMatrix; ++j)
+            for(k = 0; k < c1; ++k)
+            {
+                mult[i][j] += a[i][k] * b[k][j];
+            }
 }

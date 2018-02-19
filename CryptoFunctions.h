@@ -4,6 +4,7 @@
 #include <string>
 #include <algorithm>
 #include <stdexcept>
+#include <cmath>
 
 using namespace std;
 
@@ -152,42 +153,155 @@ static string MatrixIntToString(vector<vector<int>> matrix, bool limitedChars)
     return returnString;
 }
 
-static bool ValidInverseExists(int num, int modNum)
+static int xGCD(int leftNum, int rightNum, int &x, int &y)
 {
-    // TODO
+    if(rightNum == 0) {
+       x = 1;
+       y = 0;
+       return leftNum;
+    }
+
+    int x1, y1, gcd = xGCD(rightNum, leftNum % rightNum, x1, y1);
+    x = y1;
+    y = x1 - (leftNum / rightNum) * y1;
+    return gcd;
+}
+
+static int MultiplicativeInverseModulo(int num, int modNum)
+{
+    int x = 0, y = 0;
+    int gcd = xGCD(num, modNum, x, y);
+    if(gcd != 1)
+    {
+        return -1;
+    }
+    else
+    {
+        return x;
+    }
 }
 
 static vector<vector<int>> MultiplyMatricesModulo(vector<vector<int>> leftMatrix, vector<vector<int>> rightMatrix, int modNum)
 {
-    if(leftMatrix[0].size() != rightMatrix.size())
-    {
-        cerr << "dimen error.\n";
-        exit(0);
-    }
+    vector<vector<int> > answerM = leftMatrix;
+	for (int i = 0; i < rightMatrix.size(); i++)
+	{
+		for (int j = 0; j < leftMatrix[0].size(); j++)
+		{
+			int tempI = 0;
 
-    vector<vector<int>> returnMatrix(leftMatrix.size(), vector<int>(rightMatrix[0].size()));
+			for (int x = 0; x < rightMatrix[i].size(); x++)
+			{
+				tempI = tempI + (rightMatrix[i][x] * leftMatrix[x][j]);
+			}
 
-    int r1 = leftMatrix.size();
-    int r2 = rightMatrix.size();
-    int c1 = leftMatrix[0].size();
-    int c2 = rightMatrix[0].size();
-
-    for(int i = 0; i < r1; ++i)
-    {
-        for(int j = 0; j < c2; ++j)
-        {
-            for(int k = 0; k < c1; ++k)
-            {
-                returnMatrix[i][j] += leftMatrix[i][k] * rightMatrix[k][j];
-                returnMatrix[i][k] %= modNum;
-            }
-        }
-    }
-    
-    return returnMatrix;
+			answerM[i][j] = (tempI % modNum);
+		}
+	}
+    return answerM;
 }
 
-static vector<vector<int>> InvertMatrixModulo (vector<vector<int>> matrix, int modNum)
+static int DeterminantModulo (vector<vector<int>> matrix, int modNum)
 {
-    //1 / det * adjoint
+    int add = 0, mulP = 1, sub = 0, mulN = 1, det;
+
+	if (matrix.size() > 2)
+	{
+		for (int i = 0; i < matrix.size(); i++)
+		{
+			for (int j = 0, n = i; j < matrix.size(); j++, n++)
+			{
+				mulP *= matrix[j][n % matrix[j].size()];
+			}
+			add += mulP;
+			mulP = 1;
+		}
+
+		for (int i = (matrix.size() - 1); i >= 0; i--)
+		{
+			for (int j = (matrix.size() - 1), n = (matrix.size() - (i + 1)); j >= 0; j--, n++)
+			{
+				mulN *= matrix[j][n % matrix[j].size()];
+			}
+			sub += mulN;
+			mulN = 1;
+		}
+	}
+	else if (matrix.size() == 2) // if 2 by 2
+	{
+		add = matrix[0][0] * matrix[1][1];
+		sub = matrix[0][1] * matrix[1][0];
+	}
+	else // if only 1 value. 
+	{
+		add = matrix[0][0];
+		sub = 0;
+	}
+
+	det = add - sub;
+
+	while (det < 0)
+	{
+		det += modNum; // to account for negative values. 
+	}
+    return (det % modNum);
+}
+
+static vector<vector<int>> InvertMatrixModulo(vector<vector<int>> matrix, int detInverse, int modNum)
+{
+	int temp;
+	bool added = false;
+	vector<vector<int>> returnMatrix;
+
+	for (int i = 0; i < matrix.size(); i++)
+	{
+		vector<int> answerList;
+
+		for (int j = 0; j < matrix[i].size(); j++)
+		{
+			vector<vector<int>> subMatrix;
+			for (int x = 0; x < matrix.size(); x++)
+			{
+				vector<int> subList;
+				for (int y = 0; y < matrix[x].size(); y++)
+				{
+					temp = matrix[x][y];
+					if ((x != j) && (y != i)) // ignores subsequent columns and rows. 
+					{
+						subList.push_back(temp);
+						added = true;
+					}
+				}
+				if (added) // ignores subsequent columns and rows. 
+				{
+					subMatrix.push_back(subList);
+					added = false;
+				}
+			}
+			temp = pow(-1, (i + j)) * detInverse * DeterminantModulo(subMatrix, modNum);
+			while (temp < 0)
+			{
+				temp += modNum; // to account for negative values. 
+			}
+			answerList.push_back(temp % modNum);
+		}
+		returnMatrix.push_back(answerList);
+	}
+
+	return returnMatrix;
+}
+
+static vector<vector<int>> TransposeMatrix(vector<vector<int>> matrix)
+{
+    vector<vector<int> > returnMatrix;
+	for (int i = 0; i < matrix[0].size(); i++)
+	{
+		vector<int> temp;
+		for (int j = 0; j < matrix.size(); j++)
+		{
+			temp.push_back(matrix[j][i]);
+		}
+		returnMatrix.push_back(temp);
+	}
+    return returnMatrix;
 }

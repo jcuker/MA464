@@ -92,6 +92,7 @@ void ParseArguments(int argc, char** argv)
     
 }
 
+// TODO - comment / refactor this
 void Encrypt()
 {
     string plaintext;
@@ -115,6 +116,21 @@ void Encrypt()
 
     vector<vector<int>> plaintextMatrix = StringToMatrixInt(plaintext, dimen, limitedChars);
     vector<vector<int>> keyMatrix = StringToMatrixInt(key, dimen, limitedChars);
+
+    if(dimen != plaintextMatrix.size())
+    {
+        cerr << "Plaintext matrix dimension and dimension of square matrix aren't compatable.\n";
+    }
+
+    int detOfKey = DeterminantModulo(keyMatrix, modulusNum);
+    int multInv = MultiplicativeInverseModulo(detOfKey, modulusNum);
+
+    if(multInv == -1)
+    {
+        cerr << "The determinant of the key matrix does not have an inverse under mod " << modulusNum << ".\n";
+        exit(0);
+    }
+
     vector<vector<int>> ciphertextMatrix = HillCipherEncrypt(plaintextMatrix, keyMatrix);
 
     cout << "ciphertext:\n";
@@ -124,12 +140,30 @@ void Encrypt()
 void Decrypt()
 {
     string ciphertext;
-    int key;
 
     cout << "Enter the ciphertext.\n";
     getline(cin, ciphertext);
     RemoveWhitespace(ciphertext);
 
+    cout << "What is the dimension of the key matrix? (EX. 2, 3, 4, ...)\n";
+    int dimen;
+    cin >> dimen;
+
+    cout << "Enter the key used to encrypt.\n";
+    string key;
+    cin >> key;
+
+    vector<vector<int>> ciphertextMatrix = StringToMatrixInt(ciphertext, dimen, limitedChars);
+    vector<vector<int>> keyMatrix = StringToMatrixInt(key, dimen, limitedChars);
+    
+    if(dimen != ciphertextMatrix.size())
+    {
+        cerr << "Plaintext matrix dimension and dimension of square matrix aren't compatable.\n";
+    }
+    vector<vector<int>> plaintextMatrix = HillCipherDecrypt(ciphertextMatrix, keyMatrix);
+
+    cout << "plaintext:\n";
+    PrintBlock(MatrixIntToString(plaintextMatrix, limitedChars));
 }
 
 vector<vector<int>> HillCipherEncrypt(vector<vector<int>> plaintextMatrix, vector<vector<int>> keyMatrix)
@@ -140,7 +174,17 @@ vector<vector<int>> HillCipherEncrypt(vector<vector<int>> plaintextMatrix, vecto
 
 vector<vector<int>> HillCipherDecrypt(vector<vector<int>> ciphertextMatrix, vector<vector<int>> keyMatrix)
 {
-    vector<vector<int>> inverseKeyMatrix = InvertMatrixModulo(keyMatrix, modulusNum);
-    vector<vector<int>> plaintextMatrix = MultiplyMatrices(ciphertextMatrix, inverseKeyMatrix);
-    return ciphertextMatrix;
+    int detOfKey = DeterminantModulo(keyMatrix, modulusNum);
+    int multInv = MultiplicativeInverseModulo(detOfKey, modulusNum);
+    if(multInv == -1)
+    {
+        cerr << "The determinant of the key matrix does not have an inverse under mod " << modulusNum << ".\n";
+        exit(0);
+    }
+
+    vector<vector<int>> inverseKeyMatrix = InvertMatrixModulo(keyMatrix, multInv, modulusNum);
+    vector<vector<int>> plaintextMatrix = MultiplyMatricesModulo(ciphertextMatrix, inverseKeyMatrix, modulusNum);
+    TransposeMatrix(plaintextMatrix);
+
+    return plaintextMatrix;
 }

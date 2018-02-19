@@ -157,9 +157,9 @@ static bool ValidInverseExists(int num, int modNum)
     // TODO
 }
 
-static vector<vector<int>> MultiplyMatrices(vector<vector<int>> leftMatrix, vector<vector<int>> rightMatrix)
+static vector<vector<int>> MultiplyMatricesModulo(vector<vector<int>> leftMatrix, vector<vector<int>> rightMatrix, int modNum)
 {
-    if(leftMatrix[0].size != rightMatrix.size())
+    if(leftMatrix[0].size() != rightMatrix.size())
     {
         cerr << "dimen error.\n";
         exit(0);
@@ -167,10 +167,27 @@ static vector<vector<int>> MultiplyMatrices(vector<vector<int>> leftMatrix, vect
 
     vector<vector<int>> returnMatrix(leftMatrix.size(), vector<int>(rightMatrix[0].size()));
 
-    for(i = 0; i < leftMatrix.size(); ++i)
-        for(j = 0; j < rightMatrix; ++j)
-            for(k = 0; k < c1; ++k)
+    int r1 = leftMatrix.size();
+    int r2 = rightMatrix.size();
+    int c1 = leftMatrix[0].size();
+    int c2 = rightMatrix[0].size();
+
+    for(int i = 0; i < r1; ++i)
+    {
+        for(int j = 0; j < c2; ++j)
+        {
+            for(int k = 0; k < c1; ++k)
             {
-                mult[i][j] += a[i][k] * b[k][j];
+                returnMatrix[i][j] += leftMatrix[i][k] * rightMatrix[k][j];
+                returnMatrix[i][k] %= modNum;
             }
+        }
+    }
+    
+    return returnMatrix;
+}
+
+static vector<vector<int>> InvertMatrixModulo (vector<vector<int>> matrix, int modNum)
+{
+    //1 / det * adjoint
 }

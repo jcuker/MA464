@@ -134,7 +134,7 @@ void Decrypt()
 
 vector<vector<int>> HillCipherEncrypt(vector<vector<int>> plaintextMatrix, vector<vector<int>> keyMatrix)
 {
-    vector<vector<int>> ciphertextMatrix = MultiplyMatrices(plaintextMatrix, keyMatrix);
+    vector<vector<int>> ciphertextMatrix = MultiplyMatricesModulo(plaintextMatrix, keyMatrix, modulusNum);
     return ciphertextMatrix;
 }
 
